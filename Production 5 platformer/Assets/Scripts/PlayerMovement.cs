@@ -22,12 +22,18 @@ public class PlayerMovement : MonoBehaviour
     public Vector2 GroundCheckSize = new Vector2(0.5f, 0.05f); // How big is the "contact zone"
     public LayerMask groundLayer;
 
+    // Gravity variables
+    [Header("Gravity")] 
+    public float BaseGravity = 2.0f;
+    public float maxFallSpeed = 18.0f;
+    public float fallSpeedMultiplier = 2.0f;
 
     void Update()
     {
         // update the left and right velocity
         rb.linearVelocity = new Vector2(HorizontalMovement * MovementSpeed, rb.linearVelocity.y);
         GroundCheck();
+        Gravity();  
     }
 
     // Control movement
@@ -70,6 +76,20 @@ public class PlayerMovement : MonoBehaviour
         if (Physics2D.OverlapBox(GroundCheckPos.position, GroundCheckSize, 0, groundLayer))
         {
             JumpsRemaining = MaxJumps;
+        }
+    }
+
+    // Gravity function
+    private void Gravity()
+    {
+        if (rb.linearVelocity.y < 0) // if the player is moving downward. Negative velocity means we are moving downward
+        {
+            rb.gravityScale = BaseGravity * fallSpeedMultiplier; // Make the player fall increasingly faster
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Max(rb.linearVelocity.y, -maxFallSpeed)); // Cap fall velocity
+        }
+        else
+        {
+            rb.gravityScale = BaseGravity;
         }
     }
 }
