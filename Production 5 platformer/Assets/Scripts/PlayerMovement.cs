@@ -13,6 +13,8 @@ public class PlayerMovement : MonoBehaviour
     // Same as movement
     [Header("Jumping")] 
     public float JumpPower = 10.0f;
+    public int MaxJumps = 2; // Maximum number of jumps allowed
+    private int JumpsRemaining;
 
     // Ground checks variables to not infinitely jump 
     [Header("Groundcheck")]
@@ -25,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
     {
         // update the left and right velocity
         rb.linearVelocity = new Vector2(HorizontalMovement * MovementSpeed, rb.linearVelocity.y);
+        GroundCheck();
     }
 
     // Control movement
@@ -37,10 +40,11 @@ public class PlayerMovement : MonoBehaviour
     // Control jumping
     public void Jump(InputAction.CallbackContext context)
     {
-        if (context.performed && isGrounded())
+        if (context.performed && JumpsRemaining > 0)
         {
             // Start jump
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, JumpPower);
+            JumpsRemaining--;
         }
         else if (context.canceled)
         {
@@ -48,6 +52,7 @@ public class PlayerMovement : MonoBehaviour
             if (rb.linearVelocity.y > 0) // Only reduce if still going up
             {
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
+                JumpsRemaining--;
             }
         }
     }
@@ -60,12 +65,11 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Check if we are grounded
-    private bool isGrounded()
+    private void GroundCheck()
     {
         if (Physics2D.OverlapBox(GroundCheckPos.position, GroundCheckSize, 0, groundLayer))
         {
-            return true;
+            JumpsRemaining = MaxJumps;
         }
-        return false;
     }
 }
