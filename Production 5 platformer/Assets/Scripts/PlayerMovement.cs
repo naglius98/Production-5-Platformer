@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement")]
     public float MovementSpeed = 5.0f;
     private float HorizontalMovement;
+    private bool isFacingRight = true; // used to flip the sprite
 
     // Same as movement
     [Header("Jumping")] 
@@ -21,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     public Transform GroundCheckPos; // Check the position
     public Vector2 GroundCheckSize = new Vector2(0.5f, 0.05f); // How big is the "contact zone"
     public LayerMask groundLayer;
+    private bool isGrounded;
 
     // Gravity variables
     [Header("Gravity")] 
@@ -34,6 +37,10 @@ public class PlayerMovement : MonoBehaviour
     public Vector2 WallCheckSize = new Vector2(0.5f, 0.05f); // How big is the "contact zone"
     public LayerMask WallLayer;
 
+    [Header("WallMovement")]
+    public float WallSlideSpeed = 2;
+    private bool isWallSliding;
+
 
     void Update()
     {
@@ -41,6 +48,8 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector2(HorizontalMovement * MovementSpeed, rb.linearVelocity.y);
         GroundCheck();
         Gravity();  
+        Flip();
+        WallSlide();
     }
 
     // Control movement
@@ -88,7 +97,18 @@ public class PlayerMovement : MonoBehaviour
         if (Physics2D.OverlapBox(GroundCheckPos.position, GroundCheckSize, 0, groundLayer))
         {
             JumpsRemaining = MaxJumps;
+            isGrounded = true;
         }
+        else
+        {
+            isGrounded = false;
+        }
+    }
+
+    // Check if we are touching a wall
+    private bool WallCheck()
+    {
+        return Physics2D.OverlapBox(WallCheckPos.position, WallCheckSize, 0, WallLayer);
     }
 
     // Gravity function
@@ -104,4 +124,30 @@ public class PlayerMovement : MonoBehaviour
             rb.gravityScale = BaseGravity;
         }
     }
+
+    private void Flip()
+    {
+        if (isFacingRight && HorizontalMovement < 0 || !isFacingRight && HorizontalMovement > 0)
+        {
+            isFacingRight = !isFacingRight; // flip the bool
+            Vector3 localScale = transform.localScale;
+            localScale.x *= -1.0f; // flip the sprit
+            transform.localScale = localScale; // set the transform to the new value
+
+        }
+    }
+
+    private void WallSlide()
+    {
+        if (!isGrounded & WallCheck() & HorizontalMovement != 0) // slide if we aren't grounded, we are on a wall and our speed is different than 0
+        {
+            isWallSliding = true;
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Max(rb.linearVelocity.y, -WallSlideSpeed)); // Cap the fall rate
+        }
+        else
+        {
+            isWallSliding = false;
+        }
+    }
 }
+
