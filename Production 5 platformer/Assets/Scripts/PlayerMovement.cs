@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -41,15 +42,29 @@ public class PlayerMovement : MonoBehaviour
     public float WallSlideSpeed = 2;
     private bool isWallSliding;
 
+    [Header("WallJumping")] 
+    private bool isWallJumping;
+    float WallJumpDirection;
+    private float WallJumpTime = 0.5f;
+    private float WallJumpTimer;
+    public Vector2 WallJumpPower = new Vector2(5.0f, 10.0f);
+
+
+
 
     void Update()
     {
-        // update the left and right velocity
-        rb.linearVelocity = new Vector2(HorizontalMovement * MovementSpeed, rb.linearVelocity.y);
         GroundCheck();
-        Gravity();  
-        Flip();
+        Gravity();
         WallSlide();
+        WallJump();
+        
+        // update the left and right velocity if we are not walljumping
+        if (!isWallJumping)
+        {
+            rb.linearVelocity = new Vector2(HorizontalMovement * MovementSpeed, rb.linearVelocity.y);
+            Flip();
+        }
     }
 
     // Control movement
@@ -76,6 +91,24 @@ public class PlayerMovement : MonoBehaviour
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
                 JumpsRemaining--;
             }
+        }
+
+        // Wall Jumping
+        if (context.performed && WallJumpTimer > 0.0f)
+        {
+            isWallJumping = true;
+            rb.linearVelocity = new Vector2(WallJumpDirection * WallJumpPower.x, WallJumpPower.y); // Wall jump
+            WallJumpTimer = 0.0f;
+
+            if (transform.localScale.x != WallJumpDirection)
+            {
+                isFacingRight = !isFacingRight; // flip the bool
+                Vector3 localScale = transform.localScale;
+                localScale.x *= -1.0f; // flip the sprit
+                transform.localScale = localScale; // set the transform to the new value
+            }
+
+            CancelInvoke(nameof(CancelWallJump)); // as soon as we wall slide we are able to jump again
         }
     }
 
@@ -148,6 +181,25 @@ public class PlayerMovement : MonoBehaviour
         {
             isWallSliding = false;
         }
+    }
+
+    private void WallJump()
+    {
+        if (isWallSliding)
+        {
+            isWallJumping = false;
+            WallJumpDirection = -transform.localScale.x; // jump in the opposite direction
+            WallJumpTimer = WallJumpTime; // reset the timer
+        }
+        else if (WallJumpTimer > 0)
+        {
+            WallJumpTimer -= Time.deltaTime; // tick the timer down
+        }
+    }
+
+    private void CancelWallJump()
+    {
+        isWallJumping = false;
     }
 }
 
