@@ -28,6 +28,13 @@ public class PlayerMovement : MonoBehaviour
     public float maxFallSpeed = 18.0f;
     public float fallSpeedMultiplier = 2.0f;
 
+    // Wall sliding variables
+    [Header("Wallcheck")]
+    public Transform WallCheckPos; // Check the position
+    public Vector2 WallCheckSize = new Vector2(0.5f, 0.05f); // How big is the "contact zone"
+    public LayerMask WallLayer;
+
+
     void Update()
     {
         // update the left and right velocity
@@ -66,8 +73,13 @@ public class PlayerMovement : MonoBehaviour
     // Used to visualize the GroundCheckSize
     private void OnDrawGizmosSelected()
     {
+        // Draw the groundcheck
         Gizmos.color = Color.white;
         Gizmos.DrawWireCube(GroundCheckPos.position, GroundCheckSize);
+
+        // Draw the wallcheck
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(WallCheckPos.position, WallCheckSize);
     }
 
     // Check if we are grounded
