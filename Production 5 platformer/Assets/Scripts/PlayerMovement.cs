@@ -82,7 +82,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Quit the application
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKey(KeyCode.Q))
         {
             Application.Quit();
         }
