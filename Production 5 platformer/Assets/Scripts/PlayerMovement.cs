@@ -108,7 +108,7 @@ public class PlayerMovement : MonoBehaviour
                 transform.localScale = localScale; // set the transform to the new value
             }
 
-            CancelInvoke(nameof(CancelWallJump)); // as soon as we wall slide we are able to jump again
+            Invoke(nameof(CancelWallJump), WallJumpTime + 0.1f); // WallJump again at wall jump + 0.1f
         }
     }
 
@@ -190,6 +190,8 @@ public class PlayerMovement : MonoBehaviour
             isWallJumping = false;
             WallJumpDirection = -transform.localScale.x; // jump in the opposite direction
             WallJumpTimer = WallJumpTime; // reset the timer
+
+            CancelInvoke(nameof(CancelWallJump));
         }
         else if (WallJumpTimer > 0)
         {
