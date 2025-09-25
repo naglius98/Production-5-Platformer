@@ -1,0 +1,47 @@
+BUILD NOTES 
+
+HOW TO PLAY:
+
+The current stage is just a sandbox to show off the concept of the game. A 2D platformer based around jumping and dashing around a level, collecting collectibles to fill up a completion bar. This will need to be done while avoiding enemies. The current sandbox shows off the movement of the player and the kind of actions that are possible: moving around using WASD, sliding and walljumping off of walls and dashing through the level using the left shift.
+
+CURRENT FEATURES:
+
+The current features in the level are the player movement: the ability to move left and right, as well as jumping. The player also has the ability to dash using left shift, as well as chaining wall jumps and sliding down vertical walls.
+
+FUTURE FEATURES:
+
+For the prototype, the following features will be added:
+
+- Menu with:
+	- Start game;
+	- How to play;
+	- Quit game
+- Enemies:
+	- Enemy AI behaviour;
+	- Enemy ability to shoot and damage the player;
+	- Enemy sprites;
+- Player:
+	- Health bar;
+	- Player ability to damage and kill enemies;
+	- Ability to move through the platforms;
+	- Player death screen;
+	- Powerups;
+	- Animations;
+- Collectible items:
+	- Collectible sprites;
+	- Collectible and score counters;
+	- Collectible completion bar;
+- Bonus:
+	- Secret rooms;
+
+For the final game, the following features will be added:
+
+- Animations:
+	- Player animations;
+	- Enemy animations;
+	- Collectible animations;
+- Audio:
+	- Menus audio;
+	- level music audio;
+	- Player audio;
+	- Enemy audio;
