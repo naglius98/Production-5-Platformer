@@ -73,17 +73,23 @@ public class PlayerMovement : MonoBehaviour
         Gravity();
         WallSlide();
         WallJump();
-        
+
         // update the left and right velocity if we are not walljumping
         if (!isWallJumping)
         {
             rb.linearVelocity = new Vector2(HorizontalMovement * MovementSpeed, rb.linearVelocity.y);
             Flip();
         }
+
+        // Quit the application
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            Application.Quit();
+        }
     }
 
     // Control movement
-    public void Move(InputAction.CallbackContext context)
+        public void Move(InputAction.CallbackContext context)
     {
         HorizontalMovement = context.ReadValue<Vector2>().x;
 
