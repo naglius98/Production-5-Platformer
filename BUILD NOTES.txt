@@ -6,7 +6,7 @@ The current stage is just a sandbox to show off the concept of the game. A 2D pl
 
 CURRENT FEATURES:
 
-The current features in the level are the player movement: the ability to move left and right, as well as jumping. The player also has the ability to dash using left shift, as well as chaining wall jumps and sliding down vertical walls.
+The current features in the level are the player movement: the ability to move left and right, as well as jumping. The player also has the ability to dash using left shift, as well as chaining wall jumps and sliding down vertical walls. Pressing Q closes the game.
 
 FUTURE FEATURES:
 
