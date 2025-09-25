@@ -19,6 +19,15 @@ public class PlayerMovement : MonoBehaviour
     public int MaxJumps = 2; // Maximum number of jumps allowed
     private int JumpsRemaining;
 
+    [Header("Dashing")] 
+    public float DashingSpeed = 20.0f;
+    public float DashDuration = 0.2f;
+    public float DashCooldown = 0.1f;
+    private bool isDashing;
+    private bool DashAvailable = true;
+    // TrailRenderer DashTrailRenderer - Will be used later when adding effects
+
+
     // Ground checks variables to not infinitely jump 
     [Header("Groundcheck")]
     public Transform GroundCheckPos; // Check the position
@@ -72,6 +81,14 @@ public class PlayerMovement : MonoBehaviour
     {
         HorizontalMovement = context.ReadValue<Vector2>().x;
 
+    }
+
+    public void Dash(InputAction.CallbackContext context)
+    {
+        if (context.performed && DashAvailable)
+        {
+            StartCoroutine(DashCoroutine());
+        }
     }
 
     // Control jumping
