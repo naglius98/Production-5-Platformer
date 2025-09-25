@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Runtime.CompilerServices;
 using UnityEditor.Rendering.LookDev;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
     public float DashingSpeed = 20.0f;
     public float DashDuration = 0.2f;
     public float DashCooldown = 0.1f;
-    private bool isDashing;
+    private bool isDashing; // Used to check if we can call dash again
     private bool DashAvailable = true;
     // TrailRenderer DashTrailRenderer - Will be used later when adding effects
 
@@ -63,6 +65,12 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // Make it so that we can't change direction while we are dashing
+        if (isDashing)
+        {
+            return;
+        }
+
         GroundCheck();
         Gravity();
         WallSlide();
@@ -219,6 +227,22 @@ public class PlayerMovement : MonoBehaviour
     private void CancelWallJump()
     {
         isWallJumping = false;
+    }
+
+    private IEnumerator DashCoroutine()
+    {
+        DashAvailable = false;
+        isDashing = true;
+        float DashDirection = isFacingRight ? 1f : -1f; // if we are facing right, set direction to 1, if not set it to -1
+
+        rb.linearVelocity = new Vector2(DashDirection * DashingSpeed, rb.linearVelocity.y); // Dash movement
+
+        yield return new WaitForSeconds(DashDuration); // Return to normal speed when this ends
+        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y); // Reset velocity
+        isDashing = false;
+
+        yield return new WaitForSeconds(DashCooldown); // Dash again when this ends
+        DashAvailable = true;
     }
 }
 
