@@ -58,8 +58,37 @@ public class PlayerMovement : MonoBehaviour
     private float WallJumpTimer;
     public Vector2 WallJumpPower = new Vector2(5.0f, 10.0f);
 
+    [Header("Reset")]
+    public Transform StartPosition;
+    private Vector3 initialPosition;
 
+    void Start()
+    {
+        // Store initial position
+        initialPosition = transform.position;
+    }
 
+    public void ResetPlayer()
+    {
+        // Reset position
+        if (StartPosition != null)
+        {
+            transform.position = StartPosition.position;
+        }
+        else
+        {
+            transform.position = initialPosition;
+        }
+        
+        // Reset velocity
+        rb.linearVelocity = Vector2.zero;
+        
+        // Reset jump state
+        JumpsRemaining = MaxJumps;
+        isDashing = false;
+        isWallJumping = false;
+        DashAvailable = true;
+    }
 
     void Update()
     {

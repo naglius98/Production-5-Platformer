@@ -20,6 +20,7 @@ public class Spawner : MonoBehaviour
    public float SpawnInterval = 0.5f;
 
    private List<Vector3> ValidSpawnPositions = new List<Vector3>();
+   private List<Vector3> OriginalSpawnPositions = new List<Vector3>();
    private List<GameObject> spawnedObjects = new List<GameObject>();
    private bool isSpawning = false;
 
@@ -28,6 +29,28 @@ public class Spawner : MonoBehaviour
    {
         // Find the valid spawn positions on the tilemap
         FindValidSpawnPositions();
+        // Store original positions for reset
+        OriginalSpawnPositions = new List<Vector3>(ValidSpawnPositions);
+        StartCoroutine(SpawnObjectsWhenNeeded());
+   }
+
+   public void ResetSpawner()
+   {
+        // Destroy all spawned objects
+        foreach (GameObject obj in spawnedObjects)
+        {
+            if (obj != null)
+            {
+                Destroy(obj);
+            }
+        }
+        spawnedObjects.Clear();
+        
+        // Reset spawn positions
+        ValidSpawnPositions = new List<Vector3>(OriginalSpawnPositions);
+        isSpawning = false;
+        
+        // Resume spawning
         StartCoroutine(SpawnObjectsWhenNeeded());
    }
 

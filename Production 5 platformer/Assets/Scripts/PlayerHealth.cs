@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class PlayerHealth : MonoBehaviour
     private SpriteRenderer SpriteRenderer;
     private Color OriginalColor;
 
+    // event for game over
+    public static event Action OnPlayerDeath;
+    
+
     void Start()
     {
         CurrentHealth = MaxHealth;
@@ -17,6 +22,15 @@ public class PlayerHealth : MonoBehaviour
 
         SpriteRenderer = GetComponent<SpriteRenderer>();
         OriginalColor = SpriteRenderer.color;
+    }
+
+    public void ResetPlayer()
+    {
+        CurrentHealth = MaxHealth;
+        HealthBar.SetMaxHearts(MaxHealth);
+        
+        // Resume time when restarting
+        Time.timeScale = 1f;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -38,7 +52,9 @@ public class PlayerHealth : MonoBehaviour
 
         if (CurrentHealth <= 0)
         {
-            // Game over
+            // Game over - freeze everything
+            Time.timeScale = 0f;
+            OnPlayerDeath?.Invoke();
         }
     }
 
