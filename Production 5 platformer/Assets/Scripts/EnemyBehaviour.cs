@@ -17,7 +17,11 @@ public class EnemyBehaviour : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Color OriginalColor;
     
+    // Sound
+    public AudioClip DeathSound;
+    
     private Rigidbody2D rb;
+    private AudioSource audioSource;
     private bool IsGrounded;
     private bool ShouldJump;
 
@@ -25,6 +29,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        audioSource = GetComponent<AudioSource>();
         CurrentHealth = MaxHealth;
         OriginalColor = spriteRenderer.color;
         FindPlayer();
@@ -96,12 +101,19 @@ public class EnemyBehaviour : MonoBehaviour
         StartCoroutine(FlashWhite());
         if (CurrentHealth <= 0)
         {
-            Die();
+            StartCoroutine(Die());
         }
     }
 
-    void Die()
+    IEnumerator Die()
     {
+        // Play death sound
+        if (DeathSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(DeathSound);
+            yield return new WaitForSeconds(0.2f);
+        }
+        
         Destroy(gameObject);
     }
 

@@ -15,8 +15,9 @@ public class Spawner : MonoBehaviour
    public Tilemap tilemap;
    public GameObject[] objectPrefabs;
    public float EnemyProbability = 0.2f;
-   public int MaxObjects = 10;
-   public float GemTime = 10.0f;
+   public int MaxObjects = 8;
+   public int MaxEnemies = 4;
+   public float GemTime = 5.0f;
    public float SpawnInterval = 0.5f;
 
    private List<Vector3> ValidSpawnPositions = new List<Vector3>();
@@ -109,6 +110,19 @@ public class Spawner : MonoBehaviour
         return spawnedObjects.Count;
     }
 
+    private int ActiveEnemies()
+    {
+        int enemyCount = 0;
+        foreach (GameObject obj in spawnedObjects)
+        {
+            if (obj != null && obj.GetComponent<EnemyBehaviour>() != null)
+            {
+                enemyCount++;
+            }
+        }
+        return enemyCount;
+    }
+
     private bool PositionHasObject(Vector3 PositionToCheck)
     {
         return spawnedObjects.Any(checkObj => checkObj && Vector3.Distance(checkObj.transform.position, PositionToCheck) < 1.0f); // Make sure the object is not too close to the other objects
@@ -154,6 +168,14 @@ public class Spawner : MonoBehaviour
         if (ValidPositionFound)
         {
             ObjectType objectType = RandomObjectType();
+            
+            // Check if we spawned the maximum amount of enemies
+            if (objectType == ObjectType.Enemy && ActiveEnemies() >= MaxEnemies)
+            {
+                // Spawn a gem instead
+                objectType = ObjectType.Gem;
+            }
+            
             GameObject gameObject = Instantiate(objectPrefabs[(int)objectType], SpawnPosition, Quaternion.identity);
             spawnedObjects.Add(gameObject);
 
