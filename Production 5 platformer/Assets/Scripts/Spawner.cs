@@ -23,6 +23,7 @@ public class Spawner : MonoBehaviour
    private List<Vector3> OriginalSpawnPositions = new List<Vector3>();
    private List<GameObject> spawnedObjects = new List<GameObject>();
    private bool isSpawning = false;
+   private Coroutine spawningCoroutine;
 
    void Start()
 
@@ -31,17 +32,23 @@ public class Spawner : MonoBehaviour
         FindValidSpawnPositions();
         // Store original positions for reset
         OriginalSpawnPositions = new List<Vector3>(ValidSpawnPositions);
-        StartCoroutine(SpawnObjectsWhenNeeded());
+        spawningCoroutine = StartCoroutine(SpawnObjectsWhenNeeded());
    }
 
    public void ResetSpawner()
    {
+        Debug.Log("ResetSpawner called, destroying " + spawnedObjects.Count + " objects");
+        
+        // Stop all coroutines
+        StopAllCoroutines();
+        
         // Destroy all spawned objects
-        foreach (GameObject obj in spawnedObjects)
+        for (int i = spawnedObjects.Count - 1; i >= 0; i--)
         {
-            if (obj != null)
+            if (spawnedObjects[i] != null)
             {
-                Destroy(obj);
+                Debug.Log("Destroying object: " + spawnedObjects[i].name);
+                Destroy(spawnedObjects[i]);
             }
         }
         spawnedObjects.Clear();
@@ -50,15 +57,25 @@ public class Spawner : MonoBehaviour
         ValidSpawnPositions = new List<Vector3>(OriginalSpawnPositions);
         isSpawning = false;
         
-        // Resume spawning
-        StartCoroutine(SpawnObjectsWhenNeeded());
+        // Resume spawning after a tiny delay
+        StartCoroutine(ResetAndSpawn());
+   }
+   
+   private IEnumerator ResetAndSpawn()
+   {
+        // Wait one frame to ensure objects are destroyed
+        yield return null;
+        
+        // Now start spawning
+        Debug.Log("Starting new spawning cycle");
+        spawningCoroutine = StartCoroutine(SpawnObjectsWhenNeeded());
    }
 
    void Update()
    {
         if (!isSpawning && ActiveObjects() < MaxObjects)
         {
-            StartCoroutine(SpawnObjectsWhenNeeded());
+            spawningCoroutine = StartCoroutine(SpawnObjectsWhenNeeded());
         }
    }
 
@@ -147,9 +164,9 @@ public class Spawner : MonoBehaviour
             }
         }
     }
-   private IEnumerator SpawnObjectsWhenNeeded()
+   private IEnumerator SpawnObjectsWhenNeeded() 
    {
-        isSpawning = true;
+        isSpawning = true; 
         
         while (ActiveObjects() < MaxObjects)
         {

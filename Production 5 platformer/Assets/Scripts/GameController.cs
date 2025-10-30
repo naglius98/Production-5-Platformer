@@ -43,6 +43,9 @@ public class GameController : MonoBehaviour
 
    public void RestartGame()
    {
+        // Resume time first
+        Time.timeScale = 1f;
+        
         // Hide game over screen
         GameOverScreen.SetActive(false);
         

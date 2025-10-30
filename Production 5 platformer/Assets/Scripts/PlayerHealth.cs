@@ -28,9 +28,6 @@ public class PlayerHealth : MonoBehaviour
     {
         CurrentHealth = MaxHealth;
         HealthBar.SetMaxHearts(MaxHealth);
-        
-        // Resume time when restarting
-        Time.timeScale = 1f;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

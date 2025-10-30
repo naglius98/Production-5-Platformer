@@ -6545,8 +6545,8 @@ MonoBehaviour:
   ProgressBar: {fileID: 1475929538}
   GameOverScreen: {fileID: 1232371636}
   playerHealth: {fileID: 8738399}
-  playerMovement: {fileID: 0}
-  spawner: {fileID: 0}
+  playerMovement: {fileID: 8738396}
+  spawner: {fileID: 2128430732}
 --- !u!4 &2128430731
 Transform:
   m_ObjectHideFlags: 0
