@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
    public Slider ProgressBar;
 
    public GameObject GameOverScreen;
+   public GameObject YouWinScreen;
    
    public PlayerHealth playerHealth;
    public PlayerMovement playerMovement;
@@ -22,6 +23,7 @@ public class GameController : MonoBehaviour
         // Death event
         PlayerHealth.OnPlayerDeath += ShowGameOverScreen;
         GameOverScreen.SetActive(false);
+        YouWinScreen.SetActive(false);
    }
 
    void IncreaseScoreAmount(int amount)
@@ -30,15 +32,23 @@ public class GameController : MonoBehaviour
         ProgressBar.value = ProgressScore;
         Debug.Log("Score: " + ProgressScore);
 
-        if (ProgressScore >= 100) // if our score is greater than 100, we win
+        if (ProgressScore >= 50) // if our score is greater than 50, we win
         {
-            Debug.Log("You win!");
+            ShowYouWinScreen();
         }
    }
 
    void ShowGameOverScreen()
    {
+        Time.timeScale = 0f;
         GameOverScreen.SetActive(true);
+        MusicManager.PauseMusic();
+   }
+
+   void ShowYouWinScreen()
+   {
+        Time.timeScale = 0f;
+        YouWinScreen.SetActive(true);
         MusicManager.PauseMusic();
    }
 
@@ -47,8 +57,9 @@ public class GameController : MonoBehaviour
         // Resume time first
         Time.timeScale = 1f;
         
-        // Hide game over screen
+        // Hide all game screens
         GameOverScreen.SetActive(false);
+        YouWinScreen.SetActive(false);
         
         // Reset score
         ProgressScore = 0;
