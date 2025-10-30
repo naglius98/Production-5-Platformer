@@ -20,5 +20,9 @@ public class GameController : MonoBehaviour
         ProgressBar.value = ProgressScore;
         Debug.Log("Score: " + ProgressScore);
 
+        if (ProgressScore >= 100) // if our score is greater than 100, we win
+        {
+            Debug.Log("You win!");
+        }
    }
 }
