@@ -39,9 +39,10 @@ public class GameController : MonoBehaviour
    void ShowGameOverScreen()
    {
         GameOverScreen.SetActive(true);
+        MusicManager.PauseMusic();
    }
 
-   public void RestartGame()
+   public void RestartGame() 
    {
         // Resume time first
         Time.timeScale = 1f;
@@ -70,5 +71,8 @@ public class GameController : MonoBehaviour
         {
             spawner.ResetSpawner();
         }
+
+        // Resume music
+        MusicManager.PlayMusic(true);
    }
 }
