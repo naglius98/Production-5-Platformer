@@ -425,7 +425,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   rb: {fileID: 8738392}
   MovementSpeed: 10
-  JumpPower: 10
+  JumpPower: 12
   MaxJumps: 2
   DashingSpeed: 20
   DashDuration: 0.2

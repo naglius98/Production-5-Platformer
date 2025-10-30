@@ -58,7 +58,7 @@ public class Spawner : MonoBehaviour
         ValidSpawnPositions = new List<Vector3>(OriginalSpawnPositions);
         isSpawning = false;
         
-        // Resume spawning after a tiny delay
+        // Resume spawning after delay
         StartCoroutine(ResetAndSpawn());
    }
    

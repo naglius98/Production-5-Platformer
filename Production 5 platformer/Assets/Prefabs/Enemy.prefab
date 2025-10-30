@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed20e20385ae12d4182929454816c3df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviour
-  ChaseSpeed: 3
+  ChaseSpeed: 5
   JumpForce: 2
   GroundLayer:
     serializedVersion: 2
