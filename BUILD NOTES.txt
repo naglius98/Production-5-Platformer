@@ -2,46 +2,36 @@ BUILD NOTES
 
 HOW TO PLAY:
 
-The current stage is just a sandbox to show off the concept of the game. A 2D platformer based around jumping and dashing around a level, collecting collectibles to fill up a completion bar. This will need to be done while avoiding enemies. The current sandbox shows off the movement of the player and the kind of actions that are possible: moving around using WASD, sliding and walljumping off of walls and dashing through the level using the left shift.
+The current stage is just a sandbox to show off the concept of the game. A 2D platformer based around jumping and dashing around a level, collecting collectibles to fill up a completion bar. This will need to be done while avoiding enemies. The current sandbox shows off the movement of the player and the kind of actions that are possible: moving around using WASD, sliding and walljumping off of walls and dashing through the level using the left shift. The player can also use the mouse to fire at the enemies.
 
 CURRENT FEATURES:
 
 The current features in the level are the player movement: the ability to move left and right, as well as jumping. The player also has the ability to dash using left shift, as well as chaining wall jumps and sliding down vertical walls. Pressing Q closes the game.
+The player can use the mouse to aim and shoot bullets at the enemies, which take 3 hits to die. If the player comes in contact with the enemies, then he takes damage. Upon taking damage 3 times, the player dies.
+The objective of the game is to collect 10 of the gems that will spawn randomly in the level, while avoiding the enemies. Collecting gems will fill up a slider that shows how far into the level completion you are.
 
 FUTURE FEATURES:
 
-For the prototype, the following features will be added:
+For the final project, the following features will be added:
 
 - Menu with:
 	- Start game;
 	- How to play;
 	- Quit game
+
 - Enemies:
-	- Enemy AI behaviour;
-	- Enemy ability to shoot and damage the player;
-	- Enemy sprites;
+	- Enemy ability to shoot;
+
 - Player:
-	- Health bar;
-	- Player ability to damage and kill enemies;
-	- Ability to move through the platforms;
-	- Player death screen;
 	- Powerups;
-	- Animations;
+
 - Collectible items:
 	- Collectible sprites;
 	- Collectible and score counters;
 	- Collectible completion bar;
-- Bonus:
-	- Secret rooms;
-
-For the final game, the following features will be added:
 
 - Animations:
 	- Player animations;
 	- Enemy animations;
 	- Collectible animations;
-- Audio:
-	- Menus audio;
-	- level music audio;
-	- Player audio;
-	- Enemy audio;
+

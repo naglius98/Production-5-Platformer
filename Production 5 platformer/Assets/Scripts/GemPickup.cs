@@ -5,7 +5,8 @@ public class GemPickup : MonoBehaviour, ItemInterface
 {
     public static event Action<int> OnGemCollected;
     public int GemValue = 5;
-        public void Collect()
+
+    public void Collect()
     {
         OnGemCollected.Invoke(GemValue);
         Destroy(gameObject);
