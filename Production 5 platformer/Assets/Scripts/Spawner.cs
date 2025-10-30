@@ -31,6 +31,14 @@ public class Spawner : MonoBehaviour
         StartCoroutine(SpawnObjectsWhenNeeded());
    }
 
+   void Update()
+   {
+        if (!isSpawning && ActiveObjects() < MaxObjects)
+        {
+            StartCoroutine(SpawnObjectsWhenNeeded());
+        }
+   }
+
    // Find all valid spawn positions
    private void FindValidSpawnPositions()
    {

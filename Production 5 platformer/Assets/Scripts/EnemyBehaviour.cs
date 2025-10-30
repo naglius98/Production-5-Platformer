@@ -2,10 +2,13 @@ using UnityEngine;
 
 public class EnemyBehaviour : MonoBehaviour
 {
-    public Transform Player; // Who we are chasing
+    private Transform Player; // Who we are chasing
     public float ChaseSpeed = 3.0f; // How fast we are chasing
     public float JumpForce = 5.0f; // How high we are jumping
     public LayerMask GroundLayer; // What layer is the ground on
+
+    // Damage
+    public int Damage = 1;
     
     private Rigidbody2D rb;
     private bool IsGrounded;
@@ -14,10 +17,27 @@ public class EnemyBehaviour : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        FindPlayer();
+    }
+
+    private void FindPlayer()
+    {
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            Player = playerObj.GetComponent<Transform>();
+        }
     }
 
     void Update()
     {
+        // Make sure we have a player reference
+        if (Player == null)
+        {
+            FindPlayer();
+            return;
+        }
+
         // Are we grounded
         IsGrounded = Physics2D.Raycast(transform.position, Vector2.down, 1.0f, GroundLayer);
 
@@ -51,7 +71,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (IsGrounded && ShouldJump)
+        if (Player != null && IsGrounded && ShouldJump)
         {
             ShouldJump = false;
             Vector2 direction = (Player.position - transform.position).normalized;
