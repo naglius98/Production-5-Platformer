@@ -180,10 +180,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviour
   ChaseSpeed: 5
+  PatrolSpeed: 4
   JumpForce: 2
+  DetectionRadius: 15
+  PatrolDistance: 10
   GroundLayer:
     serializedVersion: 2
     m_Bits: 8
+  JumpAccuracy: 0.8
+  UseLineOfSight: 1
+  CanPredictMovement: 0
   Damage: 1
   MaxHealth: 3
   DeathSound: {fileID: 8300000, guid: cce9dd8577f325b40b6f4b0133421825, type: 3}
