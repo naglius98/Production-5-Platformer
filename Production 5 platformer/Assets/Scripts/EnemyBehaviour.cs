@@ -18,6 +18,7 @@ public class EnemyBehaviour : MonoBehaviour
     
     [Header("AI Intelligence")]
     [Range(0f, 1f)] public float JumpAccuracy = 0.8f;
+    [Range(0f, 1f)] public float DropChance = 0.4f; // Chance to drop down instead of jumping
     public bool UseLineOfSight = true;
     public bool CanPredictMovement = false;
     
@@ -48,6 +49,16 @@ public class EnemyBehaviour : MonoBehaviour
     private float stuckTimer = 0f;
     private const float STUCK_THRESHOLD = 0.1f;
     private const float STUCK_TIME_LIMIT = 1.5f;
+    
+    // Wall stuck detection 
+    private float wallStuckTimer = 0f;
+    private const float WALL_STUCK_TIME_LIMIT = 0.5f;
+    private bool isTouchingWall = false;
+    private float lastMoveDirection = 1f;
+    
+    // Gap decision cooldown 
+    private float gapDecisionCooldown = 0f;
+    private bool lastGapDecision = false;
 
     void Start()
     {
@@ -79,11 +90,18 @@ public class EnemyBehaviour : MonoBehaviour
             return;
         }
 
-        // Ground check - check slightly behind center to avoid false negatives at edges
+        // Update cooldowns
+        if (gapDecisionCooldown > 0)
+        {
+            gapDecisionCooldown -= Time.deltaTime;
+        }
+
+        // Ground check 
         Vector2 groundCheckPos = new Vector2(transform.position.x, transform.position.y - 0.1f);
         IsGrounded = Physics2D.Raycast(groundCheckPos, Vector2.down, 1.0f, GroundLayer);
 
-        // Stuck detection
+        /
+        CheckWallCollision();
         DetectIfStuck();
 
         // Decide behavior based on player distance and line of sight
@@ -106,6 +124,16 @@ public class EnemyBehaviour : MonoBehaviour
     {
         Vector2 targetPosition = CanPredictMovement ? PredictPlayerPosition() : (Vector2)Player.position;
         float direction = Mathf.Sign(targetPosition.x - transform.position.x);
+        
+        // If direction = 0, move in the last known direction
+        if (Mathf.Approximately(direction, 0f))
+        {
+            direction = lastMoveDirection;
+        }
+        else
+        {
+            lastMoveDirection = direction;
+        }
 
         // Move toward player
         rb.linearVelocity = new Vector2(direction * ChaseSpeed, rb.linearVelocity.y);
@@ -128,6 +156,17 @@ public class EnemyBehaviour : MonoBehaviour
         }
 
         float direction = Mathf.Sign(patrolPoint.x - transform.position.x);
+        
+        // If direction = 0, move in the last known direction
+        if (Mathf.Approximately(direction, 0f))
+        {
+            direction = lastMoveDirection;
+        }
+        else
+        {
+            lastMoveDirection = direction;
+        }
+            
         rb.linearVelocity = new Vector2(direction * PatrolSpeed, rb.linearVelocity.y);
 
         // Only check for jumps when grounded
@@ -140,13 +179,22 @@ public class EnemyBehaviour : MonoBehaviour
     private void SetNewPatrolPoint()
     {
         float randomOffset = Random.Range(-PatrolDistance, PatrolDistance);
+
+        // Ensure we don't pick a point too close to current position
+        if (Mathf.Abs(randomOffset) < 1f)
+        {
+            randomOffset = lastMoveDirection * PatrolDistance * 0.5f;
+        }
         patrolPoint = patrolStartPoint + new Vector3(randomOffset, 0, 0);
     }
 
     private void CheckForJumpOpportunity(float direction)
     {
         // Don't check for jumps if direction is invalid
-        if (Mathf.Approximately(direction, 0f)) return;
+        if (Mathf.Approximately(direction, 0f))
+        {
+            return;
+        }
         
         // Check for wall in front
         RaycastHit2D wallInFront = Physics2D.Raycast(transform.position, new Vector2(direction, 0), 1.5f, GroundLayer);
@@ -158,21 +206,81 @@ public class EnemyBehaviour : MonoBehaviour
         // Check for platform above
         RaycastHit2D platformAbove = Physics2D.Raycast(transform.position, Vector2.up, 3.0f, GroundLayer);
         bool isPlayerAbove = Player != null && Player.position.y > transform.position.y + 1f;
+        bool isPlayerBelow = Player != null && Player.position.y < transform.position.y - 1f;
 
-        // Wall ahead - need to jump over
+        // Wall ahead 
         if (wallInFront.collider != null)
         {
             ShouldJump = true;
         }
-        // Gap ahead - jump it
+
+        // Do we jump or drop
         else if (gapAhead.collider == null)
         {
-            ShouldJump = true;
+            // Check if there's ground below the gap 
+            RaycastHit2D groundBelow = Physics2D.Raycast(gapCheckPos, Vector2.down, 10f, GroundLayer);
+            bool canDropSafely = groundBelow.collider != null;
+            
+            // If player is below and we can drop, always drop
+            if (isPlayerBelow && canDropSafely && !isPatrolling)
+            {
+                ShouldJump = false; 
+            }
+
+            // If we can drop safely, randomly decide to jump or drop
+            else if (canDropSafely)
+            {
+                if (gapDecisionCooldown <= 0)
+                {
+                    gapDecisionCooldown = 0.5f; 
+                    lastGapDecision = Random.value > DropChance; // Jump if roll > DropChance
+                }
+                ShouldJump = lastGapDecision;
+            }
+            else
+            {
+                ShouldJump = true;
+            }
         }
         // Player above and platform to jump to
         else if (isPlayerAbove && platformAbove.collider != null && !isPatrolling)
         {
             ShouldJump = true;
+        }
+    }
+
+    private void CheckWallCollision()
+    {
+        float direction = Mathf.Sign(rb.linearVelocity.x);
+        if (Mathf.Approximately(direction, 0f))
+        {
+            direction = lastMoveDirection;
+        }
+        
+        // Check for wall in the direction we're moving
+        RaycastHit2D wallCheck = Physics2D.Raycast(transform.position, new Vector2(direction, 0), 0.6f, GroundLayer);
+        isTouchingWall = wallCheck.collider != null;
+        
+        // If touching wall and not grounded, we might be stuck on side of platform
+        if (isTouchingWall && !IsGrounded)
+        {
+            wallStuckTimer += Time.deltaTime;
+            
+            if (wallStuckTimer > WALL_STUCK_TIME_LIMIT)
+            {
+                // Push away from wall and reverse direction
+                rb.linearVelocity = new Vector2(-direction * ChaseSpeed * 0.5f, rb.linearVelocity.y);
+                wallStuckTimer = 0f;
+                
+                if (isPatrolling)
+                {
+                    SetNewPatrolPoint();
+                }
+            }
+        }
+        else
+        {
+            wallStuckTimer = 0f;
         }
     }
 
@@ -189,12 +297,18 @@ public class EnemyBehaviour : MonoBehaviour
 
     private bool HasLineOfSight()
     {
-        if (Player == null) return false;
+        if (Player == null)
+        {
+            return false;
+        }
         
         Vector2 direction = Player.position - transform.position;
         float distance = direction.magnitude;
         
-        if (distance > DetectionRadius) return false;
+        if (distance > DetectionRadius)
+        {
+            return false;
+        }
         
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction.normalized, distance, GroundLayer);
         
@@ -204,7 +318,10 @@ public class EnemyBehaviour : MonoBehaviour
 
     private Vector2 PredictPlayerPosition()
     {
-        if (Player == null) return Vector2.zero;
+        if (Player == null)
+        {
+            return Vector2.zero;
+        }
         
         Rigidbody2D playerRb = Player.GetComponent<Rigidbody2D>();
         if (playerRb != null)
@@ -217,18 +334,30 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void DetectIfStuck()
     {
-        // Check if enemy hasn't moved much
-        if (Vector3.Distance(transform.position, lastPosition) < STUCK_THRESHOLD && IsGrounded)
+        // Check if enemy is not moving
+        float movementThreshold = IsGrounded ? STUCK_THRESHOLD : STUCK_THRESHOLD * 0.5f;
+        
+        if (Vector3.Distance(transform.position, lastPosition) < movementThreshold)
         {
             stuckTimer += Time.deltaTime;
             
-            if (stuckTimer > STUCK_TIME_LIMIT)
+            float timeLimit = IsGrounded ? STUCK_TIME_LIMIT : STUCK_TIME_LIMIT * 0.75f;
+            
+            if (stuckTimer > timeLimit)
             {
-                // Try to get unstuck by jumping
-                ShouldJump = true;
+                if (IsGrounded)
+                {
+                    ShouldJump = true;
+                }
+                else
+                {
+                    // Push away from whatever we're stuck on
+                    float pushDirection = isTouchingWall ? -lastMoveDirection : lastMoveDirection;
+                    rb.linearVelocity = new Vector2(pushDirection * ChaseSpeed * 0.5f, rb.linearVelocity.y - 0.5f);
+                }
+                
                 stuckTimer = 0f;
                 
-                // If patrolling, change direction
                 if (isPatrolling)
                 {
                     SetNewPatrolPoint();
@@ -261,7 +390,10 @@ public class EnemyBehaviour : MonoBehaviour
             {
                 // Patrol jump 
                 float direction = Mathf.Sign(rb.linearVelocity.x);
-                if (Mathf.Approximately(direction, 0f)) direction = 1f;
+                if (Mathf.Approximately(direction, 0f))
+                {
+                    direction = lastMoveDirection;
+                }
                 jumpDirection = new Vector2(direction * JumpForce * 0.3f, JumpForce);
             }
             

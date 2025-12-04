@@ -305,5 +305,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyShoot
   BulletPrefab: {fileID: 5819092540856486625, guid: 84531751a9d1a8f49a35380fad22d9c4, type: 3}
   BulletSpeed: 40
-  ShootSound: {fileID: 0}
-  ShootCooldown: 1
+  ShootSound: {fileID: 8300000, guid: f1ef7721e6aeb814c87fbf6fc4e5bc34, type: 3}
+  ShootCooldown: 1.5
