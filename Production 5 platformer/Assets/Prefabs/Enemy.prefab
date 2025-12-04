@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 9096354452083645795}
   - component: {fileID: -6323867682387615040}
   - component: {fileID: -48951689989143902}
+  - component: {fileID: 7202862860491972284}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -290,3 +291,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &7202862860491972284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7986000421458599868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03a3911db2b4578419f22c9e0c2cf402, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyShoot
+  BulletPrefab: {fileID: 5819092540856486625, guid: 84531751a9d1a8f49a35380fad22d9c4, type: 3}
+  BulletSpeed: 40
+  ShootSound: {fileID: 0}
+  ShootCooldown: 1

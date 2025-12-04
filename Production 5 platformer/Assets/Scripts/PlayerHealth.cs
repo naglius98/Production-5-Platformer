@@ -40,7 +40,8 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    private void TakeDamage(int Damage)
+    
+    public void TakeDamage(int Damage)
     {
         CurrentHealth -= Damage;
         HealthBar.UpdateHearts(CurrentHealth);

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class EnemyBehaviour : MonoBehaviour
 {
-    [Header("Target")]
+   [Header("Target")]
     private Transform Player;
     
     [Header("Movement")]
@@ -41,6 +41,7 @@ public class EnemyBehaviour : MonoBehaviour
     private bool isPatrolling = false;
     private Vector3 patrolPoint;
     private Vector3 patrolStartPoint;
+    public bool CanSeePlayer { get; private set; }
     
     // Stuck detection
     private Vector3 lastPosition;
@@ -87,7 +88,8 @@ public class EnemyBehaviour : MonoBehaviour
 
         // Decide behavior based on player distance and line of sight
         float distanceToPlayer = Vector2.Distance(transform.position, Player.position);
-        bool canSeePlayer = !UseLineOfSight || HasLineOfSight();
+        CanSeePlayer = !UseLineOfSight || HasLineOfSight();
+        bool canSeePlayer = CanSeePlayer;
 
         if (distanceToPlayer <= DetectionRadius && canSeePlayer)
         {
