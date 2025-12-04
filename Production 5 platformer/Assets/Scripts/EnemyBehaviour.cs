@@ -18,7 +18,7 @@ public class EnemyBehaviour : MonoBehaviour
     
     [Header("AI Intelligence")]
     [Range(0f, 1f)] public float JumpAccuracy = 0.8f;
-    [Range(0f, 1f)] public float DropChance = 0.4f; // Chance to drop down instead of jumping
+    [Range(0f, 1f)] public float DropChance = 0.4f;
     public bool UseLineOfSight = true;
     public bool CanPredictMovement = false;
     
@@ -56,9 +56,9 @@ public class EnemyBehaviour : MonoBehaviour
     private bool isTouchingWall = false;
     private float lastMoveDirection = 1f;
     
-    // Gap decision cooldown 
-    private float gapDecisionCooldown = 0f;
-    private bool lastGapDecision = false;
+    // Jump cooldown to prevent spam jumping at edges
+    private float jumpCooldown = 0f;
+    private float lastGapJumpX = float.MinValue;
 
     void Start()
     {
@@ -91,16 +91,15 @@ public class EnemyBehaviour : MonoBehaviour
         }
 
         // Update cooldowns
-        if (gapDecisionCooldown > 0)
+        if (jumpCooldown > 0)
         {
-            gapDecisionCooldown -= Time.deltaTime;
+            jumpCooldown -= Time.deltaTime;
         }
 
         // Ground check 
         Vector2 groundCheckPos = new Vector2(transform.position.x, transform.position.y - 0.1f);
         IsGrounded = Physics2D.Raycast(groundCheckPos, Vector2.down, 1.0f, GroundLayer);
 
-        /
         CheckWallCollision();
         DetectIfStuck();
 
@@ -190,8 +189,8 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void CheckForJumpOpportunity(float direction)
     {
-        // Don't check for jumps if direction is invalid
-        if (Mathf.Approximately(direction, 0f))
+        // Don't check for jumps if direction is invalid or on cooldown
+        if (Mathf.Approximately(direction, 0f) || jumpCooldown > 0)
         {
             return;
         }
@@ -212,40 +211,40 @@ public class EnemyBehaviour : MonoBehaviour
         if (wallInFront.collider != null)
         {
             ShouldJump = true;
+            jumpCooldown = 0.5f;
         }
 
-        // Do we jump or drop
+        // Gap ahead
         else if (gapAhead.collider == null)
         {
-            // Check if there's ground below the gap 
-            RaycastHit2D groundBelow = Physics2D.Raycast(gapCheckPos, Vector2.down, 10f, GroundLayer);
-            bool canDropSafely = groundBelow.collider != null;
-            
-            // If player is below and we can drop, always drop
-            if (isPlayerBelow && canDropSafely && !isPatrolling)
+            // If player is below, just drop
+            if (isPlayerBelow && !isPatrolling)
             {
-                ShouldJump = false; 
+                ShouldJump = false;
             }
-
-            // If we can drop safely, randomly decide to jump or drop
-            else if (canDropSafely)
+            // Check if we already tried jumping here and failed
+            else if (Mathf.Abs(transform.position.x - lastGapJumpX) < 1.5f)
             {
-                if (gapDecisionCooldown <= 0)
+                // Turn around instead of jumping again
+                lastMoveDirection = -direction;
+                lastGapJumpX = float.MinValue;
+                if (isPatrolling)
                 {
-                    gapDecisionCooldown = 0.5f; 
-                    lastGapDecision = Random.value > DropChance; // Jump if roll > DropChance
+                    SetNewPatrolPoint();
                 }
-                ShouldJump = lastGapDecision;
             }
-            else
+            else if (Random.value > DropChance) // Random chance to jump or drop
             {
                 ShouldJump = true;
+                jumpCooldown = 0.5f;
+                lastGapJumpX = transform.position.x;
             }
         }
         // Player above and platform to jump to
         else if (isPlayerAbove && platformAbove.collider != null && !isPatrolling)
         {
             ShouldJump = true;
+            jumpCooldown = 0.5f;
         }
     }
 
@@ -284,17 +283,6 @@ public class EnemyBehaviour : MonoBehaviour
         }
     }
 
-    private bool CanMakeJump(float gapWidth, float gapHeight)
-    {
-        // Calculate jump physics
-        float gravity = Mathf.Abs(Physics2D.gravity.y * rb.gravityScale);
-        float jumpTime = Mathf.Sqrt(2 * JumpForce / gravity);
-        float horizontalDistance = (isPatrolling ? PatrolSpeed : ChaseSpeed) * jumpTime;
-        
-        // Can we clear the gap horizontally and vertically?
-        return horizontalDistance >= gapWidth * 0.8f && JumpForce >= gapHeight * 2f;
-    }
-
     private bool HasLineOfSight()
     {
         if (Player == null)
@@ -312,7 +300,6 @@ public class EnemyBehaviour : MonoBehaviour
         
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction.normalized, distance, GroundLayer);
         
-        // If raycast didn't hit anything, we have clear line of sight
         return hit.collider == null;
     }
 
@@ -348,6 +335,7 @@ public class EnemyBehaviour : MonoBehaviour
                 if (IsGrounded)
                 {
                     ShouldJump = true;
+                    jumpCooldown = 0.5f;
                 }
                 else
                 {
