@@ -26,6 +26,12 @@ public class GameController : MonoBehaviour
         YouWinScreen.SetActive(false);
    }
 
+void OnDestroy()
+   {
+        GemPickup.OnGemCollected -= IncreaseScoreAmount;
+        PlayerHealth.OnPlayerDeath -= ShowGameOverScreen;
+   }
+
    void IncreaseScoreAmount(int amount)
    {
         ProgressScore += amount;
