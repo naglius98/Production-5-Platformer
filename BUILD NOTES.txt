@@ -1,4 +1,4 @@
-BUILD NOTES 
+BUILD NOTES
 
 HOW TO PLAY:
 
@@ -6,32 +6,45 @@ The current stage is just a sandbox to show off the concept of the game. A 2D pl
 
 CURRENT FEATURES:
 
-The current features in the level are the player movement: the ability to move left and right, as well as jumping. The player also has the ability to dash using left shift, as well as chaining wall jumps and sliding down vertical walls. Pressing Q closes the game.
-The player can use the mouse to aim and shoot bullets at the enemies, which take 3 hits to die. If the player comes in contact with the enemies, then he takes damage. Upon taking damage 3 times, the player dies.
-The objective of the game is to collect 10 of the gems that will spawn randomly in the level, while avoiding the enemies. Collecting gems will fill up a slider that shows how far into the level completion you are.
+PLAYER: 
 
-FUTURE FEATURES:
+The player can me moved using WASD. Shift allows the player to dash so that it can get more air time. Dashing does not give i-frames. The player can aim and shoot using the mouse. Left click shoots a projectile. You are limited to shooting once every second. Pressing Q allows you to exit the game. Pressing P allows you to open a pause menu.
+The player has 3 lives and he can take damage and lose 1 life by either getting shot by the enemy or touching an enemy.
 
-For the final project, the following features will be added:
+ENEMY:
 
-- Menu with:
-	- Start game;
-	- How to play;
-	- Quit game
+The enemy spawns randomly with a 0.4 chance whenever there is a new entity spawn. The enemy has 2 modes: patrol and chase. While patrolling, it will randomly move throughout the level. When the player enters the line of sight of an enemy, it will enter chase mode: it will chase the enemy at a higher speed and will shoot the enemy if it's in line of sight. Upon the player leaving the chase range, it will go back to patrolling
 
-- Enemies:
-	- Enemy ability to shoot;
+GEMS:
 
-- Player:
-	- Powerups;
+The objective of the game is to collect these gems until the bar is full. Gems will spawn randomly throughout the level every second and will stay on screen for 5 seconds.
 
-- Collectible items:
-	- Collectible sprites;
-	- Collectible and score counters;
-	- Collectible completion bar;
 
-- Animations:
-	- Player animations;
-	- Enemy animations;
-	- Collectible animations;
+POSTMORTEM
+
+KNOWN BUGS:
+
+Here is a comprehensive list of bugs left in the build:
+
+Sometimes, the enemy will reach an edge of a platform and keep jumping upwards. This has mostly been fixed but it will happen on some edge cases;
+Sometimes, the enemy will get stuck to the bottom or the side of a platform. This has also mostly been fixed but it will occasionally happen when interacting weirdly with an edge wall;
+Sometimes, the enemy will stop moving. While the bug has not been fixed, the code will automatically reassign a new patrol point when detects the enemy hasn't moved for a couple of seconds;
+Due to spawning rates and chances, there is a very little chance that no enemies will spawn before the player is able to collect all the gems needed;
+Sometimes, the gems will spawn being halfway inside of a platform. This is just a visual bug as you are still able to collect them;
+
+MISSING FEATURES
+
+Here is a list of missing features in the build:
+
+Player powerups;
+Different type of enemies;
+
+PROJECT REFLECTIONS:
+
+Although not as big or packed with content as I imagined when starting, I am happy with the final result. The game itself is not only a slice of a deliverable game, but it is open ended and good enough to be the basis for a bigger project. 
+The biggest challenges did not come from starting or creating the project, but rather from the refining and bug hunting and fixing, specifically regarding the enemy movement and navigation systems. Particularly, the bugs regarding jumping off of platforms were the most challenging part of the project. Getting the enemies to move smoothly in between platforms, while jumping properly and integrating it with an AI that is simple but effective was by far the biggest challenge in the project. It is what took the most time and what I am most unsatisfied with, as I was not able to give it the feeling and look I set out to give.
+
+Time management was an issue, with a lot of procrastinating and last minute crunching, which definitely contributed to the downsizing of the project and the inability to make it as smooth as possible. While giving myself more time to work on the project in order to achieve a better result could have been useful, the fact that there aren't any major issues and the fact that the minor issues leftover are mostly stylistic and do not influence gameplay a lot mean that I was able to organize my workflow in a good enough manner for the time I gave myself.
+
+Overall, I am satisfied with the state of what I was able to achieve, while I am overall dissatisfied with the amount of content and scope of the project. Self imposed time constraints and overfocusing on details meant that I was not able to expand it too much, but it resulted in a smaller project with more smoothness and a better overall feel.
 

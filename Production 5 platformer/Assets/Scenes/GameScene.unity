@@ -9032,11 +9032,11 @@ MonoBehaviour:
   objectPrefabs:
   - {fileID: 3506080393008323696, guid: 4397e750e36c4ea4194d7911dd42dc29, type: 3}
   - {fileID: 7986000421458599868, guid: 623db68e5c7523d4094abf9c27c1555d, type: 3}
-  EnemyProbability: 0.2
+  EnemyProbability: 0.4
   MaxObjects: 10
-  MaxEnemies: 4
-  GemTime: 10
-  SpawnInterval: 0.5
+  MaxEnemies: 6
+  GemTime: 5
+  SpawnInterval: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
