@@ -509,6 +509,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   MaxHealth: 3
   HealthBar: {fileID: 1223680799}
+  ShakeDuration: 0.2
+  ShakeMagnitude: 0.15
 --- !u!114 &8738400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1070,6 +1072,7 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
+  - component: {fileID: 330585548}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1195,6 +1198,18 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &330585548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc07c7016174c4b4b8a0dd1aa6e6288a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraShake
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -8764,6 +8779,7 @@ GameObject:
   - component: {fileID: 1825449940}
   - component: {fileID: 1825449939}
   - component: {fileID: 1825449938}
+  - component: {fileID: 1825449941}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: Untagged
@@ -8854,12 +8870,24 @@ Transform:
   m_GameObject: {fileID: 1825449937}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0016125, y: -0.044, z: -10}
+  m_LocalPosition: {x: -4.26, y: -5.7, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1825449941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1825449937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc07c7016174c4b4b8a0dd1aa6e6288a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraShake
 --- !u!1 &2012409544
 GameObject:
   m_ObjectHideFlags: 0
